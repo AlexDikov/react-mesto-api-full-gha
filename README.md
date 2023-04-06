@@ -5,7 +5,7 @@
 
 ## Ссылки на проект
 
-IP-адрес x.x.x.x
+IP-адрес 51.250.76.76
 
 Frontend https://dikovpet.nomoredomains.monster/
 
