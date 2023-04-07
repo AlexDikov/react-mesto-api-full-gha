@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { regexLink } = require('../utils/constants');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -10,8 +11,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
-    // eslint-disable-next-line no-useless-escape
-    pattern: '/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/',
+    pattern: regexLink,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -19,7 +19,7 @@ const cardSchema = new mongoose.Schema({
     required: true,
   },
   likes: {
-    type: Array,
+    type: ['user'],
     default: [],
   },
   createdAt: {

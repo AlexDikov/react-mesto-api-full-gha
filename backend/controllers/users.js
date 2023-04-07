@@ -1,6 +1,5 @@
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const User = require('../models/user');
@@ -65,7 +64,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
-        throw new BadRequestError('Введены неверные почта или пароль');
+        throw new NotFoundError('Введены неверные почта или пароль');
       } else {
         const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
         res.send({ token })
@@ -88,7 +87,7 @@ module.exports.modifyUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new BadRequestError('Ошибка ввода');
+        throw new NotFoundError('Ошибка ввода');
       } else res.send(user);
     })
     .catch(next);
@@ -107,7 +106,7 @@ module.exports.modifyUserAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new BadRequestError('Ошибка ввода');
+        throw new NotFoundError('Ошибка ввода');
       } else res.send({ data: user });
     })
     .catch(next);
