@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const User = require('../models/user');
+require('dotenv').config();
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -60,13 +61,14 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+  const secretKey = process.env.JWT_SECRET_KEY;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Введены неверные почта или пароль');
       } else {
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' });
         res.send({ token })
           .end();
       }

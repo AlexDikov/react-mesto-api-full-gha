@@ -10,10 +10,11 @@ module.exports.getCards = (req, res, next) => {
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
-  Card.create({ name, link })
+  const owner = req.user._id;
+  Card.create({ name, link, owner })
     .then((card) => Card.populate(card, { path: 'owner', select: '-password -__v' }))
     .then((card) => {
-      res.send(card).status(201).message('Пользователь создан');
+      res.status(201).send({ card, message: 'Карточка создана' });
     })
     .catch(next);
 };
@@ -36,9 +37,10 @@ module.exports.deleteCard = (req, res, next) => {
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user } },
+    { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .populate('owner likes')
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Пользователь не найден');
@@ -51,9 +53,10 @@ module.exports.likeCard = (req, res, next) => {
 
 module.exports.dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   req.params.cardId,
-  { $pull: { likes: req.user } },
+  { $pull: { likes: req.user._id } },
   { new: true },
 )
+  .populate('owner likes')
   .then((card) => {
     if (!card) {
       throw new NotFoundError('Пользователь не найден');
