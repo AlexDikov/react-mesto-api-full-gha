@@ -65,13 +65,9 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Введены неверные почта или пароль');
-      } else {
-        const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' });
-        res.send({ token })
-          .end();
-      }
+      const token = jwt.sign({ _id: user._id }, secretKey, { expiresIn: '7d' });
+      res.send({ token })
+        .end();
     })
     .catch(next);
 };
